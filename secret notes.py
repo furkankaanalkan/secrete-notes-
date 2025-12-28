@@ -1,4 +1,6 @@
 import tkinter
+import cryptography
+
 
 window = tkinter.Tk()
 window.title("Secret Notes")
@@ -32,14 +34,37 @@ entry_2 = tkinter.Entry(window)
 entry_2.pack()
 
 
-button_1 = tkinter.Button(window, text="Save and Encrypt", command=window.destroy)
+'''
+message = 'this is a secret message'
+my_key = Fernet.generate_key()
+fernet = Fernet(my_key)
+encrypted_message = fernet.encrypt(message.encode())
+
+print("original string: ", message)
+print("encrypted string: ", encrypted_message)
+
+decrypted_message = fernet.decrypt(encrypted_message)
+print("decrypted string: ", decrypted_message)
+
+'''
+
+
+def encrypt_and_save_to_file():
+    text =text_1.get("1.0", tkinter.END)
+    with open("secret notes.txt",mode="a",  ) as file:
+        file.write(text)
+    label_5.config(text=f"Secret Notes saved to file")
+
+
+
+button_1 = tkinter.Button(window, text="Save and Encrypt", command=encrypt_and_save_to_file)
 button_1.pack()
 
 button_2 = tkinter.Button(window, text="Decrypt", command=window.destroy)
 button_2.pack()
 
-
-
+label_5 = tkinter.Label(window)
+label_5.pack()
 
 
 
