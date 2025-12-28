@@ -1,7 +1,6 @@
 import tkinter
 from cryptography.fernet import Fernet
 
-
 window = tkinter.Tk()
 window.title("Secret Notes")
 window.geometry("350x570")
@@ -34,40 +33,51 @@ entry_2 = tkinter.Entry(window)
 entry_2.pack()
 
 
-fernet = Fernet(my_key)
+
 
 #print("original string: ", message)
 #print("encrypted string: ", encrypted_message)
-
+#my_key = Fernet.generate_key(str(entry_2.get()))
+#fernet = Fernet(my_key)
 #decrypted_message = fernet.decrypt(encrypted_message)
 #print("decrypted string: ", decrypted_message)
+my_key = Fernet.generate_key()
+fernet = Fernet(my_key)
+
+#furkan = keyword.iskeyword(entry_2.get())
+userkey =
 
 
 
 def encrypt_and_save_to_file():
     message = text_1.get("1.0", "end")
-    encrypted_message =  '\n' + str(fernet.encrypt(message.encode()))
-    my_key = Fernet.generate_key(entry_2.get())
+    my_key = Fernet.generate_key()
     fernet = Fernet(my_key)
-    text_1.config(text=print(encrypted_message))
+    encrypted_message =fernet.encrypt(message.encode())
+    print(encrypted_message)
 
-
-
-    title = entry_1.get()
+    title = '\n' + entry_1.get()
     with open("secret notes.txt",mode="a") as file:
         file.write(title)
 
-    #text =text_1.get("1.0", tkinter.END)
     with open("secret notes.txt",mode="a") as file:
-        file.write(encrypted_message)
+        file.write('\n' + str(encrypted_message) + '\n' + str(my_key))
     label_5.config(text=f"Secret Notes saved to file")
 
 
+def decrypt_system():
+    saved_message = text_1.get("1.0", "end")
+    last_key = bytes(entry_2.get()[1:], "utf-8")
+    saved_message_key = Fernet(last_key)
+    decrypted_message = saved_message_key.decrypt(saved_message.decode())
+    print(decrypted_message)
 
-button_1 = tkinter.Button(window, text="Save and Encrypt", command=encrypt_and_save_to_file)
+
+
+button_1 = tkinter.Button(window, text="Save and Encrypt", command=encrypt_and_save_to_file )
 button_1.pack()
 
-button_2 = tkinter.Button(window, text="Decrypt", command=window.destroy)
+button_2 = tkinter.Button(window, text="Decrypt", command=decrypt_system)
 button_2.pack()
 
 label_5 = tkinter.Label(window)
