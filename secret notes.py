@@ -1,5 +1,5 @@
 import tkinter
-import cryptography
+from cryptography.fernet import Fernet
 
 
 window = tkinter.Tk()
@@ -34,25 +34,32 @@ entry_2 = tkinter.Entry(window)
 entry_2.pack()
 
 
-'''
-message = 'this is a secret message'
-my_key = Fernet.generate_key()
 fernet = Fernet(my_key)
-encrypted_message = fernet.encrypt(message.encode())
 
-print("original string: ", message)
-print("encrypted string: ", encrypted_message)
+#print("original string: ", message)
+#print("encrypted string: ", encrypted_message)
 
-decrypted_message = fernet.decrypt(encrypted_message)
-print("decrypted string: ", decrypted_message)
+#decrypted_message = fernet.decrypt(encrypted_message)
+#print("decrypted string: ", decrypted_message)
 
-'''
 
 
 def encrypt_and_save_to_file():
-    text =text_1.get("1.0", tkinter.END)
-    with open("secret notes.txt",mode="a",  ) as file:
-        file.write(text)
+    message = text_1.get("1.0", "end")
+    encrypted_message =  '\n' + str(fernet.encrypt(message.encode()))
+    my_key = Fernet.generate_key(entry_2.get())
+    fernet = Fernet(my_key)
+    text_1.config(text=print(encrypted_message))
+
+
+
+    title = entry_1.get()
+    with open("secret notes.txt",mode="a") as file:
+        file.write(title)
+
+    #text =text_1.get("1.0", tkinter.END)
+    with open("secret notes.txt",mode="a") as file:
+        file.write(encrypted_message)
     label_5.config(text=f"Secret Notes saved to file")
 
 
