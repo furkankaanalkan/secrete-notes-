@@ -1,5 +1,8 @@
 import tkinter
 from cryptography.fernet import Fernet
+import hashlib
+import base64
+
 
 window = tkinter.Tk()
 window.title("Secret Notes")
@@ -33,45 +36,39 @@ entry_2 = tkinter.Entry(window)
 entry_2.pack()
 
 
-
-
-#print("original string: ", message)
-#print("encrypted string: ", encrypted_message)
-#my_key = Fernet.generate_key(str(entry_2.get()))
-#fernet = Fernet(my_key)
-#decrypted_message = fernet.decrypt(encrypted_message)
-#print("decrypted string: ", decrypted_message)
-my_key = Fernet.generate_key()
-fernet = Fernet(my_key)
-
-#furkan = keyword.iskeyword(entry_2.get())
-userkey =
-
-
-
 def encrypt_and_save_to_file():
     message = text_1.get("1.0", "end")
-    my_key = Fernet.generate_key()
+
+    password = entry_2.get().encode()
+    digest = hashlib.sha256(password).digest()
+    my_key = base64.urlsafe_b64encode(digest)
+
     fernet = Fernet(my_key)
     encrypted_message =fernet.encrypt(message.encode())
-    print(encrypted_message)
-
-    title = '\n' + entry_1.get()
+    decrypted_message = fernet.decrypt(encrypted_message).decode()
+    title = '\n' + entry_1.get() + '\n'
     with open("secret notes.txt",mode="a") as file:
         file.write(title)
 
     with open("secret notes.txt",mode="a") as file:
-        file.write('\n' + str(encrypted_message) + '\n' + str(my_key))
-    label_5.config(text=f"Secret Notes saved to file")
-
+        file.write(str(encrypted_message))
+    label_5.config(text="Secret Notes saved to file")
 
 def decrypt_system():
-    saved_message = text_1.get("1.0", "end")
-    last_key = bytes(entry_2.get()[1:], "utf-8")
-    saved_message_key = Fernet(last_key)
-    decrypted_message = saved_message_key.decrypt(saved_message.decode())
-    print(decrypted_message)
+    try :
+        saved_message = bytes(text_1.get("1.1", "end"), "utf-8")
 
+        password = entry_2.get().encode()
+        digest = hashlib.sha256(password).digest()
+        last_key = base64.urlsafe_b64encode(digest)
+
+        saved_message_key = Fernet(last_key)
+        decrypted_message = saved_message_key.decrypt(saved_message).decode()
+
+        text_1.delete("1.0", "end")
+        text_1.insert("1.0", decrypted_message)
+    except :
+        label_5.config(text="your password is incorrect")
 
 
 button_1 = tkinter.Button(window, text="Save and Encrypt", command=encrypt_and_save_to_file )
@@ -82,20 +79,6 @@ button_2.pack()
 
 label_5 = tkinter.Label(window)
 label_5.pack()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 window.mainloop()
