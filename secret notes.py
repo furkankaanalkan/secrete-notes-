@@ -3,7 +3,6 @@ from cryptography.fernet import Fernet
 import hashlib
 import base64
 
-
 window = tkinter.Tk()
 window.title("Secret Notes")
 window.geometry("350x570")
@@ -37,22 +36,27 @@ entry_2.pack()
 
 
 def encrypt_and_save_to_file():
-    message = text_1.get("1.0", "end")
+    if entry_1.get() == '' or entry_2.get() == '' or text_1.get('1.0','end-1c') == '':
+        label_5.config(text="you should fill in all fields", fg="red")
+        return
+    else:
+        message = text_1.get("1.0", "end")
 
-    password = entry_2.get().encode()
-    digest = hashlib.sha256(password).digest()
-    my_key = base64.urlsafe_b64encode(digest)
+        password = entry_2.get().encode()
+        digest = hashlib.sha256(password).digest()
+        my_key = base64.urlsafe_b64encode(digest)
 
-    fernet = Fernet(my_key)
-    encrypted_message =fernet.encrypt(message.encode())
-    decrypted_message = fernet.decrypt(encrypted_message).decode()
-    title = '\n' + entry_1.get() + '\n'
-    with open("secret notes.txt",mode="a") as file:
-        file.write(title)
+        fernet = Fernet(my_key)
+        encrypted_message =fernet.encrypt(message.encode())
+        decrypted_message = fernet.decrypt(encrypted_message).decode()
+        title = '\n' + entry_1.get() + '\n'
+        with open("secret notes.txt",mode="a") as file:
+            file.write(title)
 
-    with open("secret notes.txt",mode="a") as file:
-        file.write(str(encrypted_message))
-    label_5.config(text="Secret Notes saved to file")
+        with open("secret notes.txt",mode="a") as file:
+            file.write(str(encrypted_message))
+        label_5.config(text="Secret Notes saved to file", fg="green")
+        return
 
 def decrypt_system():
     try :
@@ -67,8 +71,9 @@ def decrypt_system():
 
         text_1.delete("1.0", "end")
         text_1.insert("1.0", decrypted_message)
+        label_5.config(text="Your message has been decrypted.", fg="green")
     except :
-        label_5.config(text="your password is incorrect")
+        label_5.config(text="your password is incorrect", fg="red")
 
 
 button_1 = tkinter.Button(window, text="Save and Encrypt", command=encrypt_and_save_to_file )
